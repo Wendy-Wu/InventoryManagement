@@ -1,0 +1,47 @@
+#login-form {
+	background-color: #eeeeee;
+	border: 1px dashed #696969;
+	border-radius: 10px;
+	width: 40em;
+	height: 17em;
+	padding-top: 3em;
+}
+
+#div-login-name {
+	margin-top: 1.5em;
+}
+
+#login-name, #login-password {
+	margin: 1em;
+}
+
+#login-name {
+	margin-left: 2.2em;
+}
+
+#label-name, #label-password {
+	font-family: cursive;
+	font-weight: bold;
+	font-size: 1.5em;
+	display: inline;
+}
+
+#login-btn {
+	font-family: cursive;
+	font-weight: bold;
+	font-size: 1.5em;
+	color: #004b6b;
+	margin-left: 15em;
+	margin-top: 1em;
+}
+
+strong {
+	color: red;
+	font-family: cursive;
+	font-size: 1.2em;
+	margin-bottom: 3em;
+}
+
+.error{
+	font-size: 1.2em;
+}

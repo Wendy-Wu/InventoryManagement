@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+{% block content %}
+
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+  
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Inventory Management</a>
+    </div>
+    
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="#">Home</a></li>
+      <li><a href="#">Inventories</a></li>
+      <li><a href="#">Users</a></li>
+      <li><a href="#">My Items</a></li>
+      <li class="dropdown">
+      	<a class="dropdown-toggle" data-toggle="dropdown" href="#">Messages<span class="caret"></span>
+      	</a>
+      	<ul class="dropdown-menu">
+          	<li><a href="#">Borrow request</a></li>        
+	        <li><a href="#">Transfer request</a></li>	        
+	        <li><a href="#">Return request</a></li>
+	        <li><a href="#">My borrows</a></li>
+	        <li><a href="#">My transfers</a></li>
+	        <li><a href="#">My returns</a></li>        
+        </ul>
+      </li>
+    </ul>
+    
+    <ul class="nav navbar-nav navbar-right">
+      <li><a href="#"><span class="glyphicon glyphicon-user"></span> {{name}}</a></li>
+      <li><a href="/login"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+    </ul>
+    
+  </div>
+</nav>
+
+<!-- Main body -->
+<div class="jumbotron">   
+	<div class="flip-container" align="center" id="Inventories">
+		<p> Inventories </p>
+		<div class="operation-panel-top">
+			<img src="{{url_for('static', filename='img/borrow.png')}}" class="operation operation-borrow"/>
+			<img src="{{url_for('static', filename='img/return.png')}}" class="operation operation-return"/>
+			<span class="glyphicon glyphicon-edit operation operation-edit"></span>
+			<span class="glyphicon glyphicon-transfer operation operation-transfer"></span>
+			<span class="glyphicon glyphicon-trash operation operation-scrap"></span>			
+			<span class="glyphicon glyphicon-remove operation operation-delete"></span>
+		</div>
+		<div class="searchbox">
+			<img src="{{url_for('static', filename='img/search.png')}}">
+			<input type="text" id="search-inventory"></input>
+		</div>
+		<div class="operation-btns">
+			<img class="new-btn" src="{{url_for('static', filename='img/new.png')}}"></img>
+			<a href="/static/export_file/export.xls" download="export" id="export-excel">
+	        			<span class="glyphicon glyphicon-export"></span>
+			</a>		
+		</div>
+		
+		<!-- Modal -->
+	<div id="add-array" class="modal fade" role="dialog">
+	  <div class="modal-dialog">
+	
+	    <!-- Modal content-->
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h4 class="modal-title">Add an array</h4>
+	      </div>
+	      <div class="modal-body" align="center">
+	        <form class="form-horizontal">
+			  <div class="form-group">
+			    <label for="array-name" class="col-sm-4 control-label">Array Name: </label>
+			    <div class="col-sm-6">
+			      <input type="text" class="form-control" id="array-name" placeholder="Array Name">
+			    </div>
+			  </div>
+			  <div class="form-group">
+			    <label for="serial-number" class="col-sm-4 control-label">Serial Number: </label>
+			    <div class="col-sm-6">
+			      <input type="text" class="form-control" id="serial-number" placeholder="Serial Number">
+			    </div>
+			  </div> 
+	        </form>
+	      </div>
+	      <div class="modal-footer">
+	        <button id="add-confirm" type="button" data-dismiss="modal" class="btn btn-info">Add</button>
+	      </div>
+	    </div>
+	    
+	  </div>
+	</div>
+		
+		<div id="dialog-form">
+			<form action="/import-excel" method=post enctype=multipart/form-data>
+		      	 <label for="excel-file">Add from excel file</label>
+				 <input type="file" name="choose-excel-file" id="excel-file">
+		         <input type=submit value=Import id="submit-excel">
+		    </form>
+			
+					<p>Or add by filling in the blank</p>
+					<p class="error-msg"><strong>Error:</strong> please check the information.</p>
+	
+			  <form>
+				  <fieldset>
+				  	<label for="tag">Tag</label>
+				  	<input type="text" name="tag" id="tag" class="text ui-widget-content ui-corner-all">
+				    <label for="name">Name</label>
+				    <input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all">
+				    <label for="PN">PN</label>
+				  	<input type="text" name="PN" id="PN" class="text ui-widget-content ui-corner-all">
+				  	<label for="SN">SN</label>
+				  	<input type="text" name="SN" id="SN" class="text ui-widget-content ui-corner-all">
+				  	<label for="shipping">Shipping/Source</label>
+				  	<input type="text" name="shipping" id="shipping" class="text ui-widget-content ui-corner-all">
+				  	<label for="capital">Capital/Expense</label>
+				  	<input type="text" name="capital" id="capital" class="text ui-widget-content ui-corner-all">
+				  	<label for="disposition">Disposition</label>
+				  	<input type="text" name="disposition" id="disposition" class="text ui-widget-content ui-corner-all">
+				  	<label for="status">Status</label>
+				  	<input type="text" name="status" id="status" class="text ui-widget-content ui-corner-all">
+				  	<label for="owner">Owner</label>
+				  	<input type="text" name="owner" id="owner" class="text ui-widget-content ui-corner-all">
+				   </fieldset>
+			  </form>
+		</div>
+		
+		<div class="flipper">
+			<div class="front">
+				<!-- 前面内容 -->
+				<table class="inventory-table table table-bordered">
+				    <thead>
+				        <tr>
+				        	<th><input type="checkbox" id="check-head"/></th>
+				        	<th style="display:none;">id</th>
+				        	<th>Tag</th>
+				        	<th>Name</th>
+				        	<th>PN</th>
+				        	<th>SN</th>
+				        	<th>Shipping/Source</th>
+				        	<th>Capital/Expense</th>
+				        	<th>Disposition</th>
+				        	<th>Status</th>
+				        	<th>Owner</th>
+				        	<th>User</th>
+				        </tr>
+				    </thead>
+				    {% for inv in invs%}
+				  		<tr>
+				  			<td><input type="checkbox" class="check-item"/></td>
+				  			<td style="display:none;" class="inventory-id">{{inv.id}}</td>
+				    		<td align="center"> {{inv.tag}}</td>
+				    		<td align="center"> {{inv.name}} </td>
+				    		<td align="center">{{inv.PN}}</td>
+				    		<td align="center">{{inv.SN}}</td>
+				    		<td align="center">{{inv.shipping}}</td>
+				    		<td align="center">{{inv.capital}}</td>
+				    		<td align="center">{{inv.disposition}}</td>
+				    		<td align="center">{{inv.status}}</td>
+				    		<td align="center">{{inv.owner}}</td>
+				    		<td></td>
+				   		</tr>
+				  	{% endfor %}
+				</table>
+				
+			</div>
+			<div class="back">
+				<!-- 背面内容 -->
+				<!-- 前面内容 -->
+				<table class="inventory-search-table">
+				    
+				</table>
+			</div>
+		</div>
+		<div class="operation-panel-bottom">
+			<img src="{{url_for('static', filename='img/borrow.png')}}" class="operation operation-borrow"/>
+			<img src="{{url_for('static', filename='img/return.png')}}" class="operation operation-return"/>
+			<img src="{{url_for('static', filename='img/edit.png')}}" class="operation operation-edit"/>
+			<img src="{{url_for('static', filename='img/transfer.png')}}" class="operation operation-transfer"/>
+			<img src="{{url_for('static', filename='img/scrap.png')}}" class="operation operation-scrap"/>				
+			<img src="{{url_for('static', filename='img/delete.png')}}" class="operation operation-delete"/>
+		</div>
+	</div>
+	
+	<div class="flip-container" align="center" id="Users">
+		<p> Users </p>
+		<div class="flipper">
+			<div class="front">
+				<table class="table table-bordered">
+				    <thead>
+				        <tr><th><input type="checkbox" id="check-head-user"/></th><th>Username</th><th>Email</th></tr>
+				    </thead>
+				    {% for inv in invs%}
+				  		<tr>
+				  			<td><input type="checkbox" class="check-item-user"/></td>
+				  			
+				    		<td align="center"> {{inv.username}}</td>
+				    		<td align="center"> {{inv.email}} </td>
+				   		</tr>
+				  	{% endfor %}
+				</table>
+			</div>
+			<div class="back">
+				<!-- 背面内容 -->
+				<p> Things will work out in a manner</p>
+			</div>
+		</div>
+	</div>
+	
+	<div class="flip-container" align="center" id="MyItems">
+		<p> My Items </p>
+		<div class="flipper">
+			<div class="front">
+				<!-- 前面内容 -->
+				<p> Have courage and be kind </p>
+			</div>
+			<div class="back">
+				<!-- 背面内容 -->
+				<p> Come and have a try! </p>
+			</div>
+		</div>
+	</div>
+	
+	<div class="flip-container" align="center" id="MyMessages">
+		<p> My Messages </p>
+		<div class="flipper">
+			<div class="front">
+				<!-- 前面内容 -->
+				<p> Yes, you made it </p>
+			</div>
+			<div class="back">
+				<!-- 背面内容 -->
+					<p> Have fun!~~~ </p>
+				</div>
+			</div>
+		</div>
+		
+		<div class="switch-btn" align="center">
+			<img src="{{url_for('static', filename='img/switch.png')}}"/>
+		</div>
+		
+	</div>
+{% endblock %}

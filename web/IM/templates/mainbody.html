@@ -1,0 +1,71 @@
+{% extends "index.html" %}
+{% block showcontent %}
+	
+<div class="jumbotron">
+		<div class="flip-container" align="center" id="Inventories">
+			<p> Inventories </p>
+			<div class="operation-panel-top">
+				<img src="{{url_for('static', filename='img/borrow.png')}}" class="operation operation-borrow"/>
+				<img src="{{url_for('static', filename='img/return.png')}}" class="operation operation-return"/>
+				<span class="glyphicon glyphicon-edit operation operation-edit"></span>
+				<span class="glyphicon glyphicon-transfer operation operation-transfer"></span>
+				<span class="glyphicon glyphicon-trash operation operation-scrap"></span>			
+				<span class="glyphicon glyphicon-remove operation operation-delete"></span>
+			</div>
+			<div class="searchbox">
+				<img src="{{url_for('static', filename='img/search.png')}}">
+				<input type="text" id="search-inventory"></input>
+			</div>
+			<div class="operation-btns">
+				<img class="new-btn" src="{{url_for('static', filename='img/new.png')}}"></img>
+				<a href="/static/export_file/export.xls" download="export" id="export-excel">
+		        			<span class="glyphicon glyphicon-export"></span>
+				</a>		
+			</div>
+			<div class="flipper">
+				<div class="front">
+					<table class="table table-condensed"  align="center">
+						<thead>
+							<tr>
+								<th><input type="checkbox" id="check-head"/></th>
+								<th style="display:none;">id</th>
+								<th>Tag</th>
+								<th>Name</th>
+								<th>PN</th>
+					        	<th>SN</th>
+					        	<th>Shipping/Source</th>
+					        	<th>Capital/Expense</th>
+					        	<th>Disposition</th>
+					        	<th>Status</th>
+					        	<th>Owner</th>
+					        	<th>User</th>
+							</tr>
+						</thead>
+						<tbody>
+						{% for inv in invs %}
+							<tr>
+								<td><input type="checkbox" class="check-item"/></td>
+								<td style="display:none;" class="inventory-id">{{inv.id}}</td>
+								<td>{{inv.tag}}</td>
+								<td>{{inv.name}}</td>
+								<td>{{inv.PN}}</td>
+								<td>{{inv.SN}}</td>
+								<td>{{inv.shipping}}</td>
+								<td>{{inv.capital}}</td>
+								<td>{{inv.disposition}}</td>
+								<td>{{inv.status}}</td>
+								<td>{{inv.owner}}</td>
+							</tr>
+						{% endfor %}
+						</tbody>	
+					</table>	
+				</div>
+				<div class="back">
+					<table class="inventory-search-table">
+					</table>
+				</div>
+			</div>			
+		</div>
+</div>
+
+{% endblock %}

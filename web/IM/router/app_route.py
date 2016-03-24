@@ -26,6 +26,6 @@ def login():
 
 @app.route('/home', methods=['GET'])
 def home():
-    return render_template('index.html',
+    return render_template('mainbody.html',
                             name = session.get('username'),
                             invs = InvDao.get_all_invs())

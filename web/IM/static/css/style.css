@@ -19,7 +19,7 @@
 }
 
 .flip-container, .front, .back {
-	width: 97%;
+	width: 99%;
 	height: 33em;
 }
 
@@ -28,7 +28,7 @@
 	transition: 1s;
 	transform-style: preserve-3d;
 	position: relative;
-	margin-left: 8em;
+	margin-left: 1em;
 	margin-top: 0.3em;
 }
 

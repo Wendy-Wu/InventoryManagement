@@ -2,31 +2,6 @@
 
 var main = function() {
   
-  var cards = new Array();
-  cards.push('#Inventories');
-  cards.push('#Users');
-  cards.push('#MyItems');
-  cards.push('#MyMessages');
-  
-  /* Hide the other cards */
-  for(var i=1; i < cards.length; i++){
-	  $(cards[i]).hide();
-  }
-
-
-  /* Choose in menu to show the according card*/
-  $('#main-menu p').click(function(){
-	 $(cards[current_index]).hide();
-	 var clicked_item = $(this).html();
-	 clicked_item = clicked_item.replace(" ",'');
-	 for (var i=0; i<cards.length; i++){
-		 if (cards[i] == '#'+ clicked_item){
-			 current_index = i;
-		 }
-	 }
-	 $(cards[current_index]).show();
-  });
-  
   /* check items */
   $('.check-item').click(function(){
 	  /*check-head change according to check-item*/
@@ -39,48 +14,28 @@ var main = function() {
 	  /*operation show and hide according to checked item*/
 	  if ($('.check-item:checked').length) {
 		  $('.operation').css('visibility', 'visible');
-		  
+		  if ($('.check-item:checked').length > 1){
+			  $('.operation-edit').css('visibility', 'hidden');
+		  }
 	  }else{
 	      $('.operation').css('visibility', 'hidden');
 	  }
   });
   
-  /* check-head: select/unselect all*/
+  /* check-head*/
   $('#check-head').change(function(){
 		 $('.check-item').prop('checked', $(this).prop('checked'));
 		 if (this.checked == true){
- 			 $('.operation').css('visibility', 'visible')
+ 			 $('.operation').css('visibility', 'visible');
+ 			 if ($('.check-item:checked').length > 1){
+ 				  $('.operation-edit').css('visibility', 'hidden');
+ 			 }
  		  }else{
  			 $('.operation').css('visibility', 'hidden');
  		  }
   });
   
-  /*apply operation on checked items*/
-  $('.operation-delete').click(function(){
-	 checked_items = new Array();
-	 if($('.check-item:checked').length){
-		 $('.check-item:checked').each(function(){
-			  var currentRow = this.parentNode.parentNode;
-			  var column = currentRow.getElementsByTagName("td")[1];
-			  var rowID = column.textContent;
-			  
-			  checked_items.push(rowID);
-		 });
-	 }
-		 $.ajax({
-			url: "http://127.0.0.1:5000/delete-inventory",
-			type: "POST",
-			data: {rows:checked_items},
 
-			async: true,
-		 }).done(function(data){
-			 location.reload();
-		 });
-  });
-  
-  $('.operation-edit').click(function(){
-	  
-  });
   
   $('.operation-borrow').click(function(){
 	 checked_items = new Array();
@@ -192,117 +147,28 @@ var main = function() {
 	  
   });
   
-  var tag = $("#tag"),
-  name = $("#name"),
-  PN = $("#PN"),
-  SN = $("#SN"),
-  ship = $("#shipping"),
-  cap = $("#capital"),
-  dis = $("#disposition"),
-  status = $("#status"),
-  owner = $("#owner"),
-  error = $("#dialog-form .error-msg")
-  allFields = $([]).add(tag).add(name).add(PN).add(SN).add(ship).add(cap).add(dis).add(status).add(owner);
-  
-  $('#dialog-form').dialog({
-	  autoOpen: false,
-	  resizable: false,
-	  height: 500,
-	  width: 250,
-	  modal: true,
-      show: {
-        effect: "blind",
-        duration: 1000
-      },
-      hide: {
-        effect: "blind",
-        duration: 500
-      },
-      buttons: {
-    	  "Add an inventory": function() {
-    		  error.hide();
-              var bValid = true;
-//              allFields.removeClass( "ui-state-error" );
-//     
-//              bValid = bValid && checkLength( tag, "username", 3, 16 );
-//              bValid = bValid && checkLength( name, "email", 6, 80 );
-//             
-//              bValid = bValid && checkRegexp( name, /^[a-z]([0-9a-z_])+$/i, "必须由 a-z、0-9、下划线组成，且必须以字母开头。" );
-//              // From jquery.validate.js (by joern), contributed by Scott Gonzalez: http://projects.scottsplayground.com/email_address_validation/
-//              //bValid = bValid && checkRegexp( email, /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i, "eg. ui@jquery.com" );
-//              //bValid = bValid && checkRegexp( password, /^([0-9a-zA-Z])+$/, "密码字段只允许： a-z 0-9" );
-//     
-              if ( bValid ) {
-	        	  $.ajax({
-	     			 url: "http://127.0.0.1:5000/add-inventory",
-	     			 type: "POST",
-	     			 data: {tag: tag.val(),
-	     				 	name: name.val(),
-	     				 	PN: PN.val(),
-	     				 	SN: SN.val(),
-	     				 	ship: ship.val(),
-	     				 	cap: cap.val(),
-	     				 	dis: dis.val(),
-	     				 	status: status.val(),
-	     				 	owner: owner.val(),
-	     			 },
-	     			 async: true,
-	     		  }).done(function(data){
-	     			  var inv = data.result
-	     			  if (inv) {
-	     				 $( ".inventory-table" ).append( "<tr>" +
-		     	                  "<td><input type='checkbox' class='check-item'/></td>" +
-		     	                  "<td style='display:none;' class='inventory-id'>" + inv[0] + "</td>" +
-		     	                  "<td align='center'>" + inv[1] + "</td>" +
-		     	                  "<td align='center'>" + inv[2] + "</td>" +
-		     	                  "<td align='center'>" + inv[3] + "</td>" +
-		     	                  "<td align='center'>" + inv[4] + "</td>" +
-		     	                  "<td align='center'>" + inv[5] + "</td>" +
-		     	                  "<td align='center'>" + inv[6] + "</td>" +
-		     	                  "<td align='center'>" + inv[7] + "</td>" +
-		     	                  "<td align='center'>" + inv[8] + "</td>" +
-		     	                  "<td align='center'>" + inv[9] + "</td>" +
-		     	              	  "</tr>" );
-	     				 $( '#dialog-form' ).dialog( "close" );
-	     				$('.check-item').click(function(){
-	     					  /*check-head change according to check-item*/
-	     					  if ($('.check-item:checked').length == $('.check-item').length) {
-	     					        $('#check-head').prop('checked', true);
-	     					  }
-	     					  else {
-	     					        $('#check-head').prop('checked', false);
-	     					  }
-	     					  /*operation show and hide according to checked item*/
-	     					  if ($('.check-item:checked').length) {
-	     						  $('.operation').css('visibility', 'visible');
-	     						  
-	     					  }else{
-	     					      $('.operation').css('visibility', 'hidden');
-	     					  }
-	     				  });
-	     			  }
-	     			  else {
-	     				  error.show();
-	     			  }
-	     		  });
-                
-              }
-            },
-            Cancel: function() {
-              $( this ).dialog( "close" );
-            }
-          },
-      close: function() {
-        allFields.val( "" ).removeClass( "ui-state-error" );
-      }
-   });
-      
   
   $('.new-btn').click(function(){
-	 $('#dialog-form').dialog("open"); 
-	 error.hide();
+	 $('#new-inventory').modal(); 
+	 $('#add-confirm').click(function(){
+		 $.ajax({
+			 url: "http://127.0.0.1:5000/add-inventory",
+			 type: "POST",
+			 data: {tag: $('#inv-tag').val(),
+				 	name: $('#inv-name').val(),
+				 	PN: $('#inv-PN').val(),
+				 	SN: $('#inv-SN').val(),
+				 	ship: $('#inv-shipping').val(),
+				 	cap: $('#inv-capital').val(),
+				 	dis: $('#inv-disposition').val(),
+				 	owner: $('#inv-owner').val(),
+			 },
+			 async: true,
+		  }).done(function(){
+			  location.reload();
+		  });
+	 });
   });
-
   
   $('#export-excel').click(function(){
 	  $.ajax({
@@ -312,8 +178,89 @@ var main = function() {
 		  });
   });
   
+  /*apply operation on checked items*/
+  $('.operation-delete').click(function(){
+	  $('#delete-info').modal();
+	  $('#delete-confirm').click(function(){
+		  checked_items = new Array();
+		  if($('.check-item:checked').length){
+			  $('.check-item:checked').each(function(){
+				  var currentRow = this.parentNode.parentNode;
+				  var column = currentRow.getElementsByTagName("td")[1];
+				  var rowID = column.textContent;
+			  
+				  checked_items.push(rowID);
+			  });
+		  }
+		  
+		 $.ajax({
+			url: "http://127.0.0.1:5000/delete-inventory",
+			type: "POST",
+			data: {rows:checked_items},
+
+			async: true,
+		 }).done(function(){
+			 location.reload();
+		 });
+	  });
+  });
+  
+  $('.operation-edit').click(function(){
+	  var inv_ID, inv_tag, inv_name, inv_PN, inv_SN, inv_shipping, inv_capital, inv_disposition;
+	  $('.check-item:checked').each(function(){
+		  var currentRow = this.parentNode.parentNode;
+		  var column = currentRow.getElementsByTagName("td")[1];
+		  inv_ID = column.textContent;
+		  column = currentRow.getElementsByTagName("td")[2];
+		  inv_tag = column.textContent;
+		  column = currentRow.getElementsByTagName("td")[3];
+		  inv_name = column.textContent;
+		  column = currentRow.getElementsByTagName("td")[4];
+		  inv_PN = column.textContent;
+		  column = currentRow.getElementsByTagName("td")[5];
+		  inv_SN = column.textContent;
+		  column = currentRow.getElementsByTagName("td")[6];
+		  inv_shipping = column.textContent;
+		  column = currentRow.getElementsByTagName("td")[7];
+		  inv_capital = column.textContent;
+		  column = currentRow.getElementsByTagName("td")[8];
+		  inv_disposition = column.textContent;
+	  });
+	  
+	  $('#edit-tag').val(inv_tag);
+	  $('#edit-name').val(inv_name);
+	  $('#edit-PN').val(inv_PN);
+	  $('#edit-SN').val(inv_SN);
+	  $('#edit-shipping').val(inv_shipping);
+	  $('#edit-capital').val(inv_capital);
+	  $('#edit-disposition').val(inv_disposition);  
+	  
+	  $('#edit-inventory').modal();
+	  
+	  $('#edit-confirm').click(function(){
+		  $.ajax({
+				 url: "http://127.0.0.1:5000/edit-inventory",
+				 type: "POST",
+				 data: {id: inv_ID,
+					 	tag: $('#edit-tag').val(),
+					 	name: $('#edit-name').val(),
+					 	PN: $('#edit-PN').val(),
+					 	SN: $('#edit-SN').val(),
+					 	ship: $('#edit-shipping').val(),
+					 	cap: $('#edit-capital').val(),
+					 	dis: $('#edit-disposition').val(),
+				 },
+				 async: true,
+			  }).done(function(){
+					 location.reload();
+				 });
+		  
+	  });
+	  
+  });
+  
   $('#logout').click(function(){
-	  window.location.href="http://127.0.0.1:5000/hello";
+	  window.location.href="http://127.0.0.1:5000/login";
   })
   
 };

@@ -38,6 +38,18 @@ class InvDao():
             return False
         
     @staticmethod
+    def update_inventory(id, tag, name, PN, SN, shipping, capital, disposition):
+        inv = InvDao.search_inventory_by_id(id)
+        inv.tag = tag
+        inv.name = name
+        inv.PN = PN
+        inv.SN = SN
+        inv.shipping = shipping
+        inv.capital = capital
+        inv.disposition = disposition
+        db.session.commit()
+        
+    @staticmethod
     def search_inventory_by_id(search_id):
         return Inventory.query.filter_by(id = search_id).first()
     

@@ -35,7 +35,10 @@
   </div>
 </nav>
 <div>
-	{% block showcontent %}{% endblock %}
+	{% if task == 'inventory' %}
+		{% block showcontent %}{% endblock %}
+	{% endif %}
+	
 </div>
 
 {% endblock %}

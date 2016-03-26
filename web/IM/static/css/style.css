@@ -45,13 +45,13 @@
 /* front pane, placed above back */
 .front {
 	z-index: 2;
-	background-color: #eeeeee;
+	/*background-color: #eeeeee;*/
 }
 
 /* back, initially hidden pane */
 .back {
 	transform: rotateY(180deg);
-	background-color: #888888;
+	/*background-color: #888888;*/
 }
 
 .searchbox {
@@ -110,3 +110,18 @@
 	padding-top: 0.5em;
 }
 
+.navbar li a, .navbar .navbar-brand {
+    color: #2c95dd !important;
+}
+.navbar-nav li a:hover, .navbar-nav li.active a {
+    color: #2c95dd !important;
+    background-color: #fff !important;
+}
+.navbar-default .navbar-toggle {
+    border-color: transparent;
+    color: #fff !important;
+}
+
+.table{
+	font-size: 11px;
+}

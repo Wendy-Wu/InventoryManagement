@@ -1,30 +1,214 @@
 {% extends "index.html" %}
 {% block showcontent %}
 	
-<div class="jumbotron">
+<div class="container-fluid mainbody">
+	<div class="jumbotron text-center">
+		<h3>Inventory </h3>
+		<form class="form-inline">
+				<input type="text" class="form-control" size="30" placeholder="search inventory" id="search-inventory"></input>
+				<button type="button" class="btn btn-danger">Search</button>
+		</form>
+	</div>
+		<div class="page-header">
+    			<h4>Inventory List</h4>      
+ 		</div>
+ 		
+	 	<!-- Modal for adding inventory-->
+		<div id="new-inventory" class="modal fade" role="dialog">
+		  <div class="modal-dialog">
+		
+		    <!-- Modal content-->
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal">&times;</button>
+		        <h4 class="modal-title">Add inventory</h4>
+		      </div>
+		      <div class="modal-body" align="center">
+		        <form class="form-horizontal">
+				  <div class="form-group">
+				    <label for="inv-tag" class="col-sm-4 control-label">Tag: </label>
+				    <div class="col-sm-6">
+				      <input type="text" class="form-control" id="inv-tag" placeholder="Tag">
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label for="inv-name" class="col-sm-4 control-label">Name: </label>
+				    <div class="col-sm-6">
+				      <input type="text" class="form-control" id="inv-name" placeholder="Name">
+				    </div>
+				  </div> 
+				  <div class="form-group">
+				    <label for="inv-PN" class="col-sm-4 control-label">PN: </label>
+				    <div class="col-sm-6">
+				      <input type="text" class="form-control" id="inv-PN" placeholder="Part Number">
+				    </div>
+				  </div> 
+				  <div class="form-group">
+				    <label for="inv-SN" class="col-sm-4 control-label">SN: </label>
+				    <div class="col-sm-6">
+				      <input type="text" class="form-control" id="inv-SN" placeholder="Serial Number">
+				    </div>
+				  </div> 
+				  <div class="form-group">
+				    <label for="inv-shipping" class="col-sm-4 control-label">Shipping: </label>
+				    <div class="col-sm-6">
+				      <input type="text" class="form-control" id="inv-shipping" placeholder="Shipping">
+				    </div>
+				  </div> 
+				  <div class="form-group">
+				    <label for="inv-capital" class="col-sm-4 control-label">Capital: </label>
+				    <div class="col-sm-6">
+				      <input type="text" class="form-control" id="inv-capital" placeholder="Capital">
+				    </div>
+				  </div> 
+				  <div class="form-group">
+				    <label for="inv-disposition" class="col-sm-4 control-label">Disposition: </label>
+				    <div class="col-sm-6">
+				      <input type="text" class="form-control" id="inv-disposition" placeholder="Disposition">
+				    </div>
+				  </div> 
+				  <div class="form-group">
+				    <label for="inv-owner" class="col-sm-4 control-label">Owner: </label>
+				    <div class="col-sm-6">
+				      <input type="text" class="form-control" id="inv-owner" placeholder="Owner">
+				    </div>
+				  </div> 
+		        </form>
+		      </div>
+		      <div class="modal-footer">
+		        <button id="add-confirm" type="button" data-dismiss="modal" class="btn btn-info">Add</button>
+		      </div>
+		    </div>
+		    
+		  </div>
+		</div>
+ 		
+ 		<!-- Modal for deletion-->
+		<div id="delete-info" class="modal fade" role="dialog">
+		  <div class="modal-dialog modal-sm">
+		
+		    <!-- Modal content-->
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal">&times;</button>
+		        <h4 class="modal-title">Confirm to delete</h4>
+		      </div>
+		      <div class="modal-body">
+		        <p>Are you sure to delete?</p>
+		      </div>
+		      <div class="modal-footer">
+		      	<button id="delete-confirm" type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+		      </div>
+		    </div>
+		
+		  </div>
+		</div>
+		
+ 		<!-- Modal for editing inventory-->
+		<div id="edit-inventory" class="modal fade" role="dialog">
+		  <div class="modal-dialog">
+		
+		    <!-- Modal content-->
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal">&times;</button>
+		        <h4 class="modal-title">Edit the inventory</h4>
+		      </div>
+		      <div class="modal-body" align="center">
+		        <form class="form-horizontal">
+				  <div class="form-group">
+				    <label for="edit-tag" class="col-sm-4 control-label">Tag: </label>
+				    <div class="col-sm-6">
+				      <input type="text" class="form-control" id="edit-tag" placeholder="Tag">
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label for="edit-name" class="col-sm-4 control-label">Name: </label>
+				    <div class="col-sm-6">
+				      <input type="text" class="form-control" id="edit-name" placeholder="Name">
+				    </div>
+				  </div> 
+				  <div class="form-group">
+				    <label for="edit-PN" class="col-sm-4 control-label">PN: </label>
+				    <div class="col-sm-6">
+				      <input type="text" class="form-control" id="edit-PN" placeholder="Part Number">
+				    </div>
+				  </div> 
+				  <div class="form-group">
+				    <label for="edit-SN" class="col-sm-4 control-label">SN: </label>
+				    <div class="col-sm-6">
+				      <input type="text" class="form-control" id="edit-SN" placeholder="Serial Number">
+				    </div>
+				  </div> 
+				  <div class="form-group">
+				    <label for="edit-shipping" class="col-sm-4 control-label">Shipping: </label>
+				    <div class="col-sm-6">
+				      <input type="text" class="form-control" id="edit-shipping" placeholder="Shipping">
+				    </div>
+				  </div> 
+				  <div class="form-group">
+				    <label for="edit-capital" class="col-sm-4 control-label">Capital: </label>
+				    <div class="col-sm-6">
+				      <input type="text" class="form-control" id="edit-capital" placeholder="Capital">
+				    </div>
+				  </div> 
+				  <div class="form-group">
+				    <label for="edit-disposition" class="col-sm-4 control-label">Disposition: </label>
+				    <div class="col-sm-6">
+				      <input type="text" class="form-control" id="edit-disposition" placeholder="Disposition">
+				    </div>
+				  </div> 
+				  
+		        </form>
+		      </div>
+		      <div class="modal-footer">
+		        <button id="edit-confirm" type="button" data-dismiss="modal" class="btn btn-info">Apply</button>
+		      </div>
+		    </div>
+		    
+		  </div>
+		</div>
+		
 		<div class="flip-container" align="center" id="Inventories">
-			<p> Inventories </p>
-			<div class="operation-panel-top">
-				<img src="{{url_for('static', filename='img/borrow.png')}}" class="operation operation-borrow"/>
-				<img src="{{url_for('static', filename='img/return.png')}}" class="operation operation-return"/>
-				<span class="glyphicon glyphicon-edit operation operation-edit"></span>
-				<span class="glyphicon glyphicon-transfer operation operation-transfer"></span>
-				<span class="glyphicon glyphicon-trash operation operation-scrap"></span>			
-				<span class="glyphicon glyphicon-remove operation operation-delete"></span>
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-sm-8">
+						<button type="button" class="btn btn-default btn-sm operation operation-borrow">
+							<span class="glyphicon glyphicon-inbox"></span> Request
+						</button>
+						<button type="button" class="btn btn-default btn-sm operation operation-return">
+							<span class="glyphicon glyphicon-share-alt"></span> Return
+						</button>	
+						<button type="button" class="btn btn-default btn-sm operation operation-edit">
+							<span class="glyphicon glyphicon-edit "></span> Edit
+						</button>
+						<button type="button" class="btn btn-default btn-sm operation operation-transfer">
+							<span class="glyphicon glyphicon-transfer "></span> Transfer
+						</button>
+						<button type="button" class="btn btn-default btn-sm operation operation-scrap">
+							<span class="glyphicon glyphicon-trash "></span> Scrap			
+						</button>
+						<button type="button" class="btn btn-default btn-sm operation operation-delete">
+							<span class="glyphicon glyphicon-remove "></span> Delete
+						</button>
+					</div>
+
+					<div class="col-sm-4">
+						<button type="button" class="btn btn-info btn-sm new-btn">
+							<span class="glyphicon glyphicon-plus"></span> New
+						</button>
+
+						<a href="/static/export_file/export.xls" download="export" id="export-excel">
+		        			<span class="glyphicon glyphicon-export"></span> Export
+						</a>
+					</div>
+				</div>
 			</div>
-			<div class="searchbox">
-				<img src="{{url_for('static', filename='img/search.png')}}">
-				<input type="text" id="search-inventory"></input>
-			</div>
-			<div class="operation-btns">
-				<img class="new-btn" src="{{url_for('static', filename='img/new.png')}}"></img>
-				<a href="/static/export_file/export.xls" download="export" id="export-excel">
-		        			<span class="glyphicon glyphicon-export"></span>
-				</a>		
-			</div>
+			
 			<div class="flipper">
 				<div class="front">
-					<table class="table table-condensed"  align="center">
+					<table class="table table-condensed table-striped inventory-table"  align="center">
 						<thead>
 							<tr>
 								<th><input type="checkbox" id="check-head"/></th>

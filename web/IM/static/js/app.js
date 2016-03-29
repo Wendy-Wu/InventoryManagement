@@ -66,88 +66,7 @@ var main = function() {
 	 });
   });
   
-  
-  $('#search-inventory').keydown(function(event){
-	  if (event.which == 13){
-		  $('.inventory-search-table').empty();
-		  search_string = $('#search-inventory').val();
-		  if (search_string != ''){	
-			  //flip the card and show search results
-			  $('.flip-container').toggleClass('flip'); 
-			  $.ajax({
-				 url: "http://127.0.0.1:5000/search-inventory",
-				 type: "POST",
-				 data: {search_string: search_string},
-				 async: false,
-			  }).done(function(data){
-				  var invs = data.result
-				  $( ".inventory-search-table" ).append("<thead>\
-					        <tr>\
-					        	<th><input type='checkbox' id='check-search-head'/></th>\
-					        	<th style='display:none;'>id</th>\
-					        	<th>Tag</th>\
-					        	<th>Name</th>\
-					        	<th>PN</th>\
-					        	<th>SN</th>\
-					        	<th>Shipping/Source</th>\
-					        	<th>Capital/Expense</th>\
-					        	<th>Disposition</th>\
-					        	<th>Status</th>\
-					        	<th>Owner</th>\
-					        	<th>User</th>\
-					        </tr>\
-					    </thead>");
-				  for (var i=0; i<invs.length; i++){
-					  $( ".inventory-search-table" ).append( "<tr>" +
-	     	                  "<td><input type='checkbox' class='check-item'/></td>" +
-	     	                  "<td style='display:none;' class='inventory-id'>" + invs[i][0] + "</td>" +
-	     	                  "<td align='center'>" + invs[i][1] + "</td>" +
-	     	                  "<td align='center'>" + invs[i][2] + "</td>" +
-	     	                  "<td align='center'>" + invs[i][3] + "</td>" +
-	     	                  "<td align='center'>" + invs[i][4] + "</td>" +
-	     	                  "<td align='center'>" + invs[i][5] + "</td>" +
-	     	                  "<td align='center'>" + invs[i][6] + "</td>" +
-	     	                  "<td align='center'>" + invs[i][7] + "</td>" +
-	     	                  "<td align='center'>" + invs[i][8] + "</td>" +
-	     	                  "<td align='center'>" + invs[i][9] + "</td>" +
-	     	              	  "</tr>" );
-				  }
-			  }); 
-		  }else{
-			  $('.inventory-search-table').empty();
-			  $('.flip-container').toggleClass('flip'); 
-		  }
-		  $('.check-item').click(function(){
-			  /*check-head change according to check-item*/
-			  if ($('.check-item:checked').length == $('.check-item').length) {
-			        $('#check-search-head').prop('checked', true);
-			  }
-			  else {
-			        $('#check-search-head').prop('checked', false);
-			  }
-			  /*operation show and hide according to checked item*/
-			  if ($('.check-item:checked').length) {
-				  $('.operation').css('visibility', 'visible');
-				  
-			  }else{
-			      $('.operation').css('visibility', 'hidden');
-			  }
-		  });
-		  
-		  /* check-head: select/unselect all*/
-		  $('#check-search-head').change(function(){
-				 $('.check-item').prop('checked', $(this).prop('checked'));
-				 if (this.checked == true){
-		 			 $('.operation').css('visibility', 'visible')
-		 		  }else{
-		 			 $('.operation').css('visibility', 'hidden');
-		 		  }
-		  });
-	  }
-	  
-  });
-  
-  
+
   $('.new-btn').click(function(){
 	 $('#new-inventory').modal(); 
 	 $('#add-confirm').click(function(){
@@ -262,6 +181,16 @@ var main = function() {
   $('#logout').click(function(){
 	  window.location.href="http://127.0.0.1:5000/login";
   })
+  
+  var eventOutputContainer = $('#event');
+  var evtSrc = new EventSource("/subscribe");
+
+  evtSrc.onmessage = function(e) {
+      eventOutputContainer.append("<div class='alert alert-success'>"+
+    		  						"<a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>"+
+    		  						e.data+" has been edited."+
+      							  "</div>");
+  };
   
 };
 

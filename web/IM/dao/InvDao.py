@@ -56,6 +56,7 @@ class InvDao():
     @staticmethod
     def search_inventory(search_string):
         results=[]
+        temp=[]
         try:
             results.append(Inventory.query.filter_by(tag = search_string).all())
             results.append(Inventory.query.filter_by(name = search_string).all())
@@ -70,4 +71,10 @@ class InvDao():
         except Exception:
             traceback.print_exc()
 
+        for result in results:
+            if len(result) != 0:
+                for item in result:
+                    temp.append(item)
+        
+        results = temp
         return results

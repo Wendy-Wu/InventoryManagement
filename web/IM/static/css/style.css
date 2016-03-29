@@ -1,70 +1,6 @@
 @charset "utf-8";
 /* CSS Document */
 
-/* entire container, keeps perspective */
-.flip-container {
-	perspective: 1000;
-}
-
-.flip-container > p {
-	padding-top: 0.5em;
-	font-family: cursive;
-	font-weight: bold;
-	font-size: 1.5em;
-}
-
-/* flip the pane when hovered */
-.flip-container.flip .flipper {
-	transform: rotateY(180deg);
-}
-
-.flip-container, .front, .back {
-	width: 99%;
-	height: 33em;
-}
-
-/* flip speed goes here */
-.flipper {
-	transition: 1s;
-	transform-style: preserve-3d;
-	position: relative;
-	margin-left: 1em;
-	margin-top: 0.3em;
-}
-
-/* hide back of pane during swap */
-.front, .back {
-	backface-visibility: hidden;
-	border-radius: 5px;
-	position: absolute;
-	top: 0;
-	left: 0;
-	overflow: auto;
-}
-
-/* front pane, placed above back */
-.front {
-	z-index: 2;
-	/*background-color: #eeeeee;*/
-}
-
-/* back, initially hidden pane */
-.back {
-	transform: rotateY(180deg);
-	/*background-color: #888888;*/
-}
-
-.searchbox {
-	display: inline-block;
-	margin-top: 0.5em;
-	margin-bottom: 0.6em;
-}
-
-.searchbox img{
-	display: inline;
-	margin-right: 0.3em;
-}
-
 .operation-btns {
 	display: inline-block;
 	float: right;
@@ -72,42 +8,20 @@
 	margin-right: 2em;
 }
 
-.operation-btns img{
-	margin-right: 1em;
-}
-
-.operation-panel-top {
-	display: inline-block;
-	float: left;
-	margin-left: 8em;
-	margin-bottom: 0.6em;
-	padding-left: 3em;
-}
-
-.operation-panel-bottom {
-	position: fixed;
-	margin-left: 8em;
-	margin-top: 33em;
-	padding-left: 3em;	
-}
-
-.operation-panel-top img, .operation-panel-bottom img{
-	margin-left: 1em;
-}
-
 .operation {
 	visibility:hidden;
-	cursor: pointer;
 }
 
-.inventory-table {
-	padding-left: 1em;
-	padding-top: 0.5em;
+.table{
+	font-size: 11px;
 }
 
-.inventory-search-table {
-	padding-left: 1em;
-	padding-top: 0.5em;
+.inventory-table, .inventory-search-table{
+	margin-top: 2em;
+}
+
+.inventory-search-table{
+	visibility:hidden;
 }
 
 .navbar li a, .navbar .navbar-brand {
@@ -122,6 +36,3 @@
     color: #fff !important;
 }
 
-.table{
-	font-size: 11px;
-}

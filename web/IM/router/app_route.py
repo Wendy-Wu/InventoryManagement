@@ -3,14 +3,19 @@ Created on Mar 15, 2016
 
 @author: wuw7
 '''
-from flask import render_template, request, redirect, session, jsonify
+from flask import render_template, request, redirect, session, jsonify, Response, flash
 from IM import app
 from dao.UserDao import UserDao
 from dao.InvDao import InvDao
 from service.export_excel import Writer
-
+from service.sse import ServerSentEvent
 
 import os
+
+import gevent
+from gevent.queue import Queue
+
+edit_subscriptions = []
 
 @app.route('/')
 def welcome():
@@ -30,7 +35,15 @@ def login():
 
 @app.route('/home', methods=['GET'])
 def home():
-    return render_template('mainbody.html',
+    return render_template('inventory.html',
+                            name = session.get('username'),
+                            invs = InvDao.get_all_invs(),
+                            title = "Hello",
+                            task = "inventory")
+
+@app.route('/inventory', methods=['GET'])
+def inventory():
+    return render_template('inventory.html',
                             name = session.get('username'),
                             invs = InvDao.get_all_invs(),
                             title = "Hello",
@@ -57,6 +70,7 @@ def export_excel():
     file_path = os.path.join(app.config['EXPORT_FOLDER'], 'export.xls')
     print file_path
     Writer.export_excel(data, file_path)
+    return jsonify(result=True)
 
 @app.route('/add-inventory', methods=['POST'])
 def add_inventory():
@@ -84,6 +98,12 @@ def edit_inventory():
     dis = request.form.get('dis')
     
     InvDao.update_inventory(inv_id, tag, name, PN, SN, ship, cap, dis)
+    def notify():
+        msg = str('The inventory named '+name+' PN: '+PN+' SN: '+SN)
+        for sub in edit_subscriptions[:]:
+            sub.put(msg)
+    
+    gevent.spawn(notify)
     return jsonify(result=True)
 
 @app.route('/delete-inventory', methods=['POST'])
@@ -92,3 +112,33 @@ def delete_inventory():
     print delete_ids
     b = InvDao.delete_inventory(delete_ids)
     return jsonify(result=b)
+
+@app.route('/search-inventory', methods=['POST', 'GET'])    
+def search_inventory():
+    if request.method == 'POST':
+        search_string = request.form['search-string']
+        print search_string
+        invs_list = InvDao.search_inventory(search_string)
+        print invs_list
+        return render_template('inventory.html',
+                               name = session.get('username'),
+                                invs = invs_list,
+                                title = "Hello",
+                                task = "inventory")
+    else:
+        return redirect('/inventory')
+    
+@app.route("/subscribe")
+def subscribe():
+    def gen():
+        q = Queue()
+        edit_subscriptions.append(q)
+        try:
+            while True:
+                result = q.get()
+                ev = ServerSentEvent(str(result))
+                yield ev.encode()
+        except GeneratorExit: # Or maybe use flask signals
+            edit_subscriptions.remove(q)
+
+    return Response(gen(), mimetype="text/event-stream")

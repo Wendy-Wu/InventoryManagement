@@ -1,5 +1,4 @@
-﻿// JavaScript Document
-
+// JavaScript Document
 var main = function() {
   
   /* check items */
@@ -186,10 +185,22 @@ var main = function() {
   var evtSrc = new EventSource("/subscribe");
 
   evtSrc.onmessage = function(e) {
-      eventOutputContainer.append("<div class='alert alert-success'>"+
-    		  						"<a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>"+
-    		  						e.data+" has been edited."+
-      							  "</div>");
+      var data = e.data.split(';');
+      var msg = data[0];
+      var users = data[1];
+      var current_user = data[2];
+      var operation_msg = data[3];
+      
+      var user_list = users.split(' ');
+      for (var i=0, len = user_list.length; i<len; i++){
+         if(current_user == user_list[i]){
+	          eventOutputContainer.append("<div class='alert alert-success'>"+
+	    		  						"<a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>"+
+	    		  						msg+operation_msg+
+	      							  "</div>");
+         }
+      }
+      
   };
   
 };

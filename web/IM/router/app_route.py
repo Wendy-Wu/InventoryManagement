@@ -15,7 +15,7 @@ import os
 import gevent
 from gevent.queue import Queue
 
-edit_subscriptions = []
+subscriptions = []
 
 @app.route('/')
 def welcome():
@@ -98,12 +98,8 @@ def edit_inventory():
     dis = request.form.get('dis')
     
     InvDao.update_inventory(inv_id, tag, name, PN, SN, ship, cap, dis)
-    def notify():
-        msg = str('The inventory named '+name+' PN: '+PN+' SN: '+SN)
-        for sub in edit_subscriptions[:]:
-            sub.put(msg)
+    publish(inv_id, "has been edited.")
     
-    gevent.spawn(notify)
     return jsonify(result=True)
 
 @app.route('/delete-inventory', methods=['POST'])
@@ -132,13 +128,25 @@ def search_inventory():
 def subscribe():
     def gen():
         q = Queue()
-        edit_subscriptions.append(q)
+        subscriptions.append(q)
         try:
             while True:
                 result = q.get()
                 ev = ServerSentEvent(str(result))
                 yield ev.encode()
         except GeneratorExit: # Or maybe use flask signals
-            edit_subscriptions.remove(q)
+            subscriptions.remove(q)
 
     return Response(gen(), mimetype="text/event-stream")
+
+def publish(inv_id, operation_msg):
+    inv = InvDao.search_inventory_by_id(inv_id)
+    current_user = session.get('username')
+    users = 'admin'
+    
+    def notify():
+        msg = str('The inventory named '+inv.name+' PN: '+inv.PN+' SN: '+inv.SN+ ';'+ users+ ';'+current_user+';'+operation_msg)
+        for sub in subscriptions[:]:
+            sub.put(msg)
+    
+    gevent.spawn(notify)

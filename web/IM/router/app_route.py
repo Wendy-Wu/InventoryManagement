@@ -8,6 +8,7 @@ from IM import app
 from dao.UserDao import UserDao
 from dao.InvDao import InvDao
 from service.export_excel import Writer
+from service.import_excel import Parser
 from service.sse import ServerSentEvent
 
 import os
@@ -71,6 +72,21 @@ def export_excel():
     print file_path
     Writer.export_excel(data, file_path)
     return jsonify(result=True)
+
+@app.route('/import-excel', methods=['POST'])
+def import_excel():
+    '''needs to check file type == xlsx etc. 
+       if file exists, then server will overrides it by default. 
+    '''
+    file = request.files['choose-excel-file']
+    print file.filename
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+    print file_path
+    file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+    Parser.parse_by_row(file_path)
+    # the imported inventories will be added to the database and appended on the page.
+    return redirect('/inventory')  
+
 
 @app.route('/add-inventory', methods=['POST'])
 def add_inventory():

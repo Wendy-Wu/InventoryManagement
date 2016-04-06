@@ -88,6 +88,10 @@ var main = function() {
 	 });
   });
   
+  $('.import-btn').click(function(){
+	  $('#import-file').modal();
+  });
+  
   $('#export-excel').click(function(){
 	  $.ajax({
 			 url: "http://127.0.0.1:5000/export-excel",

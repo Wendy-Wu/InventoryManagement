@@ -1,4 +1,5 @@
 // JavaScript Document
+
 var main = function() {
   
   /* check items */
@@ -12,57 +13,70 @@ var main = function() {
 	  }
 	  /*operation show and hide according to checked item*/
 	  if ($('.check-item:checked').length) {
+		  new toggleBtn().toggleBack();
 		  $('.operation').css('visibility', 'visible');
+		  var trans_abled = true;
+		  $('.check-item:checked').each(function(){
+			  var currentRow = this.parentNode.parentNode;  
+			  inv_state = currentRow.getElementsByTagName("td")[9].textContent;
+			  inv_owner = currentRow.getElementsByTagName("td")[10].textContent;
+			  
+			  if(current_user == 'admin' || current_user == inv_owner){
+				  trans_abled = trans_abled & true;  
+			  }else{
+				  trans_abled = trans_abled & false;
+			  }
+			  new toggleBtn().toggle(inv_state);
+		  });
+		  if (trans_abled){
+			  $('.operation-transfer').prop('disabled', false);
+		  }else{
+			  $('.operation-transfer').prop('disabled', true);
+		  }
+		  
 		  if ($('.check-item:checked').length > 1){
-			  $('.operation-edit').css('visibility', 'hidden');
+			  $('.operation-edit').prop('disabled', true);
+		  }else{
+			  $('.operation-edit').prop('disabled', false);
 		  }
 	  }else{
 	      $('.operation').css('visibility', 'hidden');
 	  }
+	  
   });
   
   /* check-head*/
   $('#check-head').change(function(){
 		 $('.check-item').prop('checked', $(this).prop('checked'));
 		 if (this.checked == true){
+ 			 new toggleBtn().toggleBack();
  			 $('.operation').css('visibility', 'visible');
+ 			 var trans_abled = true;
+ 			 $('.check-item:checked').each(function(){
+ 				  var currentRow = this.parentNode.parentNode;  
+ 				  inv_state = currentRow.getElementsByTagName("td")[9].textContent;
+ 				  inv_owner = currentRow.getElementsByTagName("td")[10].textContent;
+ 				  if(current_user == 'admin' || current_user == inv_owner){
+ 					  trans_abled = trans_abled & true;  
+ 				  }else{
+ 					  trans_abled = trans_abled & false;
+ 				  }
+ 				  new toggleBtn().toggle(inv_state);
+ 			  });
+ 			  if (trans_abled){
+ 				  $('.operation-transfer').prop('disabled', false);
+ 			  }else{
+ 				  $('.operation-transfer').prop('disabled', true);
+ 			  }
  			 if ($('.check-item:checked').length > 1){
- 				  $('.operation-edit').css('visibility', 'hidden');
+ 				  $('.operation-edit').prop('disabled', true);
+ 			 }else{
+ 				  $('.operation-edit').prop('disabled', false);
  			 }
  		  }else{
  			 $('.operation').css('visibility', 'hidden');
  		  }
-  });
-  
 
-  
-  $('.operation-borrow').click(function(){
-	 checked_items = new Array();
-	 if($('.check-item:checked').length){
-		 $('.check-item:checked').each(function(){
-			  var currentRow = this.parentNode.parentNode;  
-			  var inv_id = currentRow.getElementsByTagName("td")[1].textContent;
-			  var owner = currentRow.getElementsByTagName("td")[10].textContent;  
-			  checked_items.push(inv_id);
-			  checked_items.push(owner);
-		 });
-	 }
-	 
-	 username = $('.user-name').val();
-	 
-	 $.ajax({
-		url: "http://127.0.0.1:5000/borrow",
-		type: "POST",
-		data: {rows:checked_items, username: username},
-
-		async: true,
-	 }).done(function(data){
-		 if (data.result == true){
-			 alert('Borrow request successfully sent.');
-		 }
-		 $('.check-item').prop('checked', false);
-		 $('.operation').css('visibility', 'hidden');
-	 });
   });
   
 
@@ -207,7 +221,136 @@ var main = function() {
       
   };
   
+  $('.operation-borrow').click(function(){
+	  	var checked_items = new Array();
+		 if($('.check-item:checked').length){
+			 $('.check-item:checked').each(function(){
+				  var currentRow = this.parentNode.parentNode;  
+				  inv_id = currentRow.getElementsByTagName("td")[1].textContent;
+				  checked_items.push(inv_id);  
+			 });
+			 
+			 $.ajax({
+				url: "http://127.0.0.1:5000/borrow",
+				type: "POST",
+				data: {rows:checked_items},
+				async: true,
+			 }).done(function(data){
+				 if (data.result == true){
+					 alert('Borrow successfully.');
+					 location.reload();
+				 }
+			 }); 
+		 }
+  });
+  
+  $('.operation-return').click(function(){
+	  	var checked_items = new Array();
+		 if($('.check-item:checked').length){
+			 $('.check-item:checked').each(function(){
+				  var currentRow = this.parentNode.parentNode;  
+				  inv_id = currentRow.getElementsByTagName("td")[1].textContent;
+				  checked_items.push(inv_id);  
+			 });
+			 
+			 $.ajax({
+				url: "http://127.0.0.1:5000/Return",
+				type: "POST",
+				data: {rows:checked_items},
+				async: true,
+			 }).done(function(data){
+				 if (data.result == true){
+					 alert('Return successfully.');
+					 location.reload();
+				 }
+			 }); 
+		 }
+});	  
+  
+  $('.operation-scrap').click(function(){
+	  $('#scrap-info').modal();
+	  $('#scrap-confirm').click(function(){
+		  var checked_items = new Array();
+			 if($('.check-item:checked').length){
+				 $('.check-item:checked').each(function(){
+					  var currentRow = this.parentNode.parentNode;  
+					  inv_id = currentRow.getElementsByTagName("td")[1].textContent;
+					  checked_items.push(inv_id);  
+				 });
+				 
+				 $.ajax({
+					url: "http://127.0.0.1:5000/scrap",
+					type: "POST",
+					data: {rows:checked_items},
+					async: true,
+				 }).done(function(data){
+					 if (data.result == true){
+						 alert('Scrap successfully.');
+						 location.reload();
+					 }
+				 }); 
+			 }
+	  });
+	});	
+
+  $('.operation-transfer').click(function(){
+	 $('#transfer-info').modal();
+	 $('#transfer-confirm').click(function(){
+		 var checked_items = new Array();
+		 $('.check-item:checked').each(function(){
+			  var currentRow = this.parentNode.parentNode;  
+			  inv_id = currentRow.getElementsByTagName("td")[1].textContent;
+			  checked_items.push(inv_id);  
+		 });
+		 var name = $('transfer-owner').val();
+		 $.ajax({
+				url: "http://127.0.0.1:5000/transfer",
+				type: "POST",
+				data: {rows:checked_items, owner:name},
+				async: false,
+			 }).done(function(data){
+				 if (data.result == true){
+					 alert('Transfer successfully.');
+					 location.reload();
+				 }else{
+					 alert('Owner not exists.');
+					 location.reload();
+				 }
+			 });	
+			
+	 }); 
+  });
+
 };
 
+var toggleBtn = function (inv_state) {
+	this.toggle = function(inv_state){
+		switch (inv_state) {
+		case 'available':
+			$('.operation-return').prop('disabled', true);
+			break;
+		case 'used':
+			$('.operation-borrow').prop('disabled', true);
+			$('.operation-scrap').prop('disabled', true);
+			break;
+		case 'scraped':
+			$('.operation-borrow').prop('disabled', true);
+			$('.operation-return').prop('disabled', true);
+			$('.operation-transfer').prop('disabled', true);
+			$('.operation-scrap').prop('disabled', true);
+			
+		default:
+			break;
+		};
+	};
+	
+	this.toggleBack = function(){
+		$('.operation-return').prop('disabled', false);
+		$('.operation-borrow').prop('disabled', false);
+		$('.operation-scrap').prop('disabled', false);
+		$('.operation-transfer').prop('disabled', false);
+	};
+	
+};
 
 $(document).ready(main);

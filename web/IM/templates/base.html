@@ -20,6 +20,9 @@
 		<script type="text/javascript">
   			var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 		</script>
+		<script type="text/javascript">
+			var current_user = '{{name}}';
+		</script>
 	</head>
   	<body>
 	    {% block content %}{% endblock %}

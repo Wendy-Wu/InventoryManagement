@@ -32,7 +32,7 @@
 							<span class="glyphicon glyphicon-transfer "></span> Transfer
 						</button>
 						<button type="button" class="btn btn-default btn-sm operation operation-scrap">
-							<span class="glyphicon glyphicon-trash "></span> Scrap			
+							<span class="glyphicon glyphicon-ban-circle "></span> Scrap			
 						</button>
 						<button type="button" class="btn btn-default btn-sm operation operation-delete">
 							<span class="glyphicon glyphicon-remove "></span> Delete
@@ -65,7 +65,7 @@
 			        	<th>Shipping/Source</th>
 			        	<th>Capital/Expense</th>
 			        	<th>Disposition</th>
-			        	<th>Status</th>
+			        	<th>State</th>
 			        	<th>Owner</th>
 			        	<th>User</th>
 					</tr>
@@ -82,8 +82,9 @@
 						<td>{{inv.shipping}}</td>
 						<td>{{inv.capital}}</td>
 						<td>{{inv.disposition}}</td>
-						<td>{{inv.status}}</td>
+						<td>{{inv.state}}</td>
 						<td>{{inv.owner}}</td>
+						<td>{{inv.user}}</td>
 					</tr>
 				{% endfor %}
 				</tbody>	
@@ -201,6 +202,50 @@
       </div>
       <div class="modal-footer">
       	<button id="delete-confirm" type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+	<!-- Modal for scrap-->
+<div id="scrap-info" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-sm">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Confirm to scrap</h4>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure to scrap? Once scraped, the inventory cannot be traced.</p>
+      </div>
+      <div class="modal-footer">
+      	<button id="scrap-confirm" type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+	<!-- Modal for transfer-->
+<div id="transfer-info" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-sm">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Transfer to</h4>
+      </div>
+      <div class="modal-body">
+        <input type='text' id='transfer-owner' placeholder='owner name'>
+      </div>
+      <div class="modal-footer">
+      	<button id="transfer-confirm" type="button" class="btn btn-info" data-dismiss="modal">Transfer</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
       </div>
     </div>

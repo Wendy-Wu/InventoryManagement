@@ -7,11 +7,13 @@ from flask import render_template, request, redirect, session, jsonify, Response
 from IM import app
 from dao.UserDao import UserDao
 from dao.InvDao import InvDao
+from dao.HistoryDao import HistoryDao
 from service.export_excel import Writer
 from service.import_excel import Parser
 from service.sse import ServerSentEvent
 
 import os
+import datetime
 
 import gevent
 from gevent.queue import Queue
@@ -63,7 +65,7 @@ def export_excel():
         inv_args.append(inv.shipping)
         inv_args.append(inv.capital)
         inv_args.append(inv.disposition)
-        inv_args.append(inv.status)
+        inv_args.append(inv.state)
         inv_args.append(inv.owner)
         data.append(inv_args)
         inv_args=[]
@@ -97,7 +99,6 @@ def add_inventory():
     ship = request.form.get('ship')
     cap = request.form.get('cap')
     dis = request.form.get('dis')
-    #status = request.form.get('status')
     owner = request.form.get('owner')
     InvDao.add_inventory(tag, name, PN, SN, ship, cap, dis, "ok", owner)
     return jsonify(result=True)
@@ -166,3 +167,46 @@ def publish(inv_id, operation_msg):
             sub.put(msg)
     
     gevent.spawn(notify)
+    
+@app.route('/borrow', methods=['POST'])
+def borrow():
+    items = request.form.getlist('rows[]')
+    username = session.get('username')
+    InvDao.borrow(items, username)
+    HistoryDao.add_record(items, username, 'borrow', str(datetime.datetime.now()))
+    #notify
+    return jsonify(result=True)
+
+@app.route('/transfer', methods=['POST'])
+def transfer():
+    items = request.form.getlist('row[]')
+    username = session.get('username')
+    ownername = request.form.get('owner')
+    owner = UserDao.search_user(ownername)
+    if owner:
+        InvDao.transfer(items, ownername)
+        HistoryDao.add_record(items, username, 'transfer', str(datetime.datetime.now()))
+        #notify
+        return jsonify(result=True)
+
+    else:
+        return jsonify(result=False)
+    
+@app.route('/Return', methods=['POST'])
+def Return():
+    items = request.form.getlist('rows[]')
+    username = session.get('username')
+    InvDao.Return(items)
+    HistoryDao.add_record(items, username, 'return', str(datetime.datetime.now()))
+    #notify
+    return jsonify(result=True)
+    
+@app.route('/scrap', methods=['POST'])
+def scrap():
+    items = request.form.getlist('rows[]')
+    username = session.get('username')
+    InvDao.scrap(items)
+    HistoryDao.add_record(items, username, 'scrap', str(datetime.datetime.now()))
+    #notify
+    return jsonify(result=True)
+      

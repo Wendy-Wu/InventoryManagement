@@ -1,0 +1,53 @@
+{% extends "index.html" %}
+{% block showcontent %}
+
+<div class="container-fluid mainbody">
+	<div class="jumbotron text-center">
+		<h3><a href="{{url_for('inventory')}}">Inventory </a></h3>
+		<form class="form-inline" action="{{ url_for('search_inventory') }}" method="post">
+				<input type="text" class="form-control" size="30" placeholder="search inventory" name="search-string" id="search-inventory"></input>
+				<button type="submit" class="btn btn-danger" id="search-inventory-btn">Search</button>
+		</form>
+	</div>
+	<div>
+		<div class="page-header">
+    			<span class="second-title">History List</span>
+    			<a href="{{url_for('inventory')}}" class="link-history">
+    			   <span class="glyphicon glyphicon-list"></span>    
+    			</a>
+ 		</div>
+ 		<div id="event">
+ 		</div>
+ 		<table class="table table-condensed table-striped">
+				<thead>
+					<tr>
+						<th>Inventory Tag</th>
+						<th>Inventory Name</th>
+						<th>Inventory PN</th>
+			        	<th>Inventory SN</th>
+			        	<th>Inventory Owner</th>
+			        	<th>Operation</th>
+			        	<th>Operator</th>
+			        	<th>Date time</th>
+					</tr>
+				</thead>
+				<tbody>
+				{% for record in records %}
+					<tr>
+						<td>{{record[0]}}</td>
+						<td>{{record[1]}}</td>
+						<td>{{record[2]}}</td>
+						<td>{{record[3]}}</td>
+						<td>{{record[4]}}</td>
+						<td>{{record[5]}}</td>
+						<td>{{record[6]}}</td>
+						<td>{{record[7]}}</td>
+					</tr>
+				{% endfor %}
+				</tbody>	
+			</table>
+ 	</div>
+		
+</div>
+
+{% endblock %}

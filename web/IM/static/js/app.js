@@ -13,32 +13,7 @@ var main = function() {
 	  }
 	  /*operation show and hide according to checked item*/
 	  if ($('.check-item:checked').length) {
-		  new toggleBtn().toggleBack();
-		  $('.operation').css('visibility', 'visible');
-		  var trans_abled = true;
-		  $('.check-item:checked').each(function(){
-			  var currentRow = this.parentNode.parentNode;  
-			  inv_state = currentRow.getElementsByTagName("td")[9].textContent;
-			  inv_owner = currentRow.getElementsByTagName("td")[10].textContent;
-			  
-			  if(current_user == 'admin' || current_user == inv_owner){
-				  trans_abled = trans_abled & true;  
-			  }else{
-				  trans_abled = trans_abled & false;
-			  }
-			  new toggleBtn().toggle(inv_state);
-		  });
-		  if (trans_abled){
-			  $('.operation-transfer').prop('disabled', false);
-		  }else{
-			  $('.operation-transfer').prop('disabled', true);
-		  }
-		  
-		  if ($('.check-item:checked').length > 1){
-			  $('.operation-edit').prop('disabled', true);
-		  }else{
-			  $('.operation-edit').prop('disabled', false);
-		  }
+		  new operateBtn().operateBtn();
 	  }else{
 	      $('.operation').css('visibility', 'hidden');
 	  }
@@ -49,30 +24,7 @@ var main = function() {
   $('#check-head').change(function(){
 		 $('.check-item').prop('checked', $(this).prop('checked'));
 		 if (this.checked == true){
- 			 new toggleBtn().toggleBack();
- 			 $('.operation').css('visibility', 'visible');
- 			 var trans_abled = true;
- 			 $('.check-item:checked').each(function(){
- 				  var currentRow = this.parentNode.parentNode;  
- 				  inv_state = currentRow.getElementsByTagName("td")[9].textContent;
- 				  inv_owner = currentRow.getElementsByTagName("td")[10].textContent;
- 				  if(current_user == 'admin' || current_user == inv_owner){
- 					  trans_abled = trans_abled & true;  
- 				  }else{
- 					  trans_abled = trans_abled & false;
- 				  }
- 				  new toggleBtn().toggle(inv_state);
- 			  });
- 			  if (trans_abled){
- 				  $('.operation-transfer').prop('disabled', false);
- 			  }else{
- 				  $('.operation-transfer').prop('disabled', true);
- 			  }
- 			 if ($('.check-item:checked').length > 1){
- 				  $('.operation-edit').prop('disabled', true);
- 			 }else{
- 				  $('.operation-edit').prop('disabled', false);
- 			 }
+			 new operateBtn().operateBtn();
  		  }else{
  			 $('.operation').css('visibility', 'hidden');
  		  }
@@ -297,31 +249,65 @@ var main = function() {
 	 $('#transfer-info').modal();
 	 $('#transfer-confirm').click(function(){
 		 var checked_items = new Array();
-		 $('.check-item:checked').each(function(){
-			  var currentRow = this.parentNode.parentNode;  
-			  inv_id = currentRow.getElementsByTagName("td")[1].textContent;
-			  checked_items.push(inv_id);  
-		 });
-		 var name = $('transfer-owner').val();
-		 $.ajax({
-				url: "http://127.0.0.1:5000/transfer",
+		 if($('.check-item:checked').length){
+			 $('.check-item:checked').each(function(){
+				  var currentRow = this.parentNode.parentNode;  
+				  inv_id = currentRow.getElementsByTagName("td")[1].textContent;
+				  checked_items.push(inv_id);  
+			 });
+			 
+			 $.ajax({
+				url: "http://127.0.0.1:5000/trans",
 				type: "POST",
-				data: {rows:checked_items, owner:name},
-				async: false,
+				data: {owner: $('#transfer-owner').val(), rows:checked_items},
+				async: true,
 			 }).done(function(data){
 				 if (data.result == true){
 					 alert('Transfer successfully.');
 					 location.reload();
 				 }else{
-					 alert('Owner not exists.');
+					 alert("Owner doesn't exist.");
 					 location.reload();
 				 }
-			 });	
+			 }); 
+		 }
 			
 	 }); 
   });
 
 };
+
+var operateBtn = function(){
+	this.operateBtn = function(){
+		new toggleBtn().toggleBack();
+		  $('.operation').css('visibility', 'visible');
+		  var trans_abled = true;
+		  $('.check-item:checked').each(function(){
+			  var currentRow = this.parentNode.parentNode;  
+			  inv_state = currentRow.getElementsByTagName("td")[9].textContent;
+			  inv_owner = currentRow.getElementsByTagName("td")[10].textContent;
+			  
+			  if(inv_state != 'scraped' && current_user == 'admin' || current_user == inv_owner){
+				  trans_abled = trans_abled & true;  
+			  }else{
+				  trans_abled = trans_abled & false;
+			  }
+			  if (trans_abled && inv_state!='scraped'){
+				  $('.operation-transfer').prop('disabled', false);
+			  }else{
+				  $('.operation-transfer').prop('disabled', true);
+			  }
+			  new toggleBtn().toggle(inv_state);
+		  });
+		  
+		  
+		  if ($('.check-item:checked').length > 1){
+			  $('.operation-edit').prop('disabled', true);
+		  }else{
+			  $('.operation-edit').prop('disabled', false);
+		  }
+	}
+}
 
 var toggleBtn = function (inv_state) {
 	this.toggle = function(inv_state){
@@ -341,15 +327,15 @@ var toggleBtn = function (inv_state) {
 			
 		default:
 			break;
-		};
-	};
+		}
+	}
 	
 	this.toggleBack = function(){
 		$('.operation-return').prop('disabled', false);
 		$('.operation-borrow').prop('disabled', false);
 		$('.operation-scrap').prop('disabled', false);
 		$('.operation-transfer').prop('disabled', false);
-	};
+	}
 	
 };
 

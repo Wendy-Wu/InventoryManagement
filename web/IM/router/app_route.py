@@ -41,8 +41,7 @@ def home():
     return render_template('inventory.html',
                             name = session.get('username'),
                             invs = InvDao.get_all_invs(),
-                            title = "Hello",
-                            task = "inventory")
+                            title = "Hello")
 
 @app.route('/inventory', methods=['GET'])
 def inventory():
@@ -177,20 +176,18 @@ def borrow():
     #notify
     return jsonify(result=True)
 
-@app.route('/transfer', methods=['POST'])
+@app.route('/trans', methods=['POST'])
 def transfer():
-    items = request.form.getlist('row[]')
+    items = request.form.getlist('rows[]')
     username = session.get('username')
-    ownername = request.form.get('owner')
+    ownername = request.form['owner']
     owner = UserDao.search_user(ownername)
     if owner:
         InvDao.transfer(items, ownername)
         HistoryDao.add_record(items, username, 'transfer', str(datetime.datetime.now()))
         #notify
         return jsonify(result=True)
-
-    else:
-        return jsonify(result=False)
+    return jsonify(result=False)
     
 @app.route('/Return', methods=['POST'])
 def Return():
@@ -209,4 +206,17 @@ def scrap():
     HistoryDao.add_record(items, username, 'scrap', str(datetime.datetime.now()))
     #notify
     return jsonify(result=True)
-      
+
+@app.route('/history', methods=['POST', 'GET'])
+def history():
+    his = HistoryDao.get_all_his()
+    records=[]
+    for record in his:
+        inv = InvDao.search_inventory_by_id(record.invid)
+        if inv:
+            result = [inv.tag, inv.name, inv.PN, inv.SN, inv.owner, record.operation, record.username, record.time]
+            records.append(result)
+    return render_template('history.html', 
+                            name = session.get('username'),
+                            records = records,
+                            title = "Hello")

@@ -99,7 +99,7 @@ def add_inventory():
     cap = request.form.get('cap')
     dis = request.form.get('dis')
     owner = request.form.get('owner')
-    InvDao.add_inventory(tag, name, PN, SN, ship, cap, dis, "ok", owner)
+    InvDao.add_inventory(tag, name, PN, SN, ship, cap, dis, "available", owner)
     return jsonify(result=True)
     
 @app.route('/edit-inventory', methods=['POST'])

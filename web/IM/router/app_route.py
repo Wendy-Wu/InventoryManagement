@@ -115,7 +115,7 @@ def edit_inventory():
     
     InvDao.update_inventory(inv_id, tag, name, PN, SN, ship, cap, dis)
     publish(inv_id, "has been edited.")
-    
+    #Mail.send_mail(inv_id, "has been edited.")
     return jsonify(result=True)
 
 @app.route('/delete-inventory', methods=['POST'])
